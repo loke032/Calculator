@@ -76,20 +76,41 @@ for (let i=1; i <= 16; i++) {
         button.id="+"
     }
     button.addEventListener("click", () => {
-        display.value += button.innerHTML
-        if ((/\d/.test(button.innerHTML)|| button.innerHTML === ".") && button.innerHTML !== "=" && operator === "") {
+        if (button.innerHTML === ".") {
+            if (operator === "" && !digit1.includes(".")) {
+                display.value += button.innerHTML
+            } else if (operator !== "" && !digit2.includes(".")) {
+                display.value += button.innerHTML
+            } 
+        } else {
+            display.value += button.innerHTML
+        }
+       
+        
+        
+        
+        
+        
+        
+        if ((/\d/.test(button.innerHTML)|| (button.innerHTML === "." && !digit1.includes(".")) || (button.innerHTML === "-" && digit1 === "")) && button.innerHTML !== "=" && operator === "") {
             digit1 += button.innerHTML
-        } else if ((/\d/.test(button.innerHTML)||button.innerHTML === ".") && button.innerHTML !== "=") {
+        } else if ((/\d/.test(button.innerHTML)||(button.innerHTML === "." && !digit2.includes(".")) || (button.innerHTML === "-" && digit2 === "")) && button.innerHTML !== "=" && operator.length === 1) {
             digit2 += button.innerHTML
-        } else if (button.innerHTML !== "="){
+        } else if (button.innerHTML !== "=" && button.innerHTML !== "."){
             operator += button.innerHTML
         }
+        
+        console.log(`Display contains: ${display.value}`)
         console.log(`Digit1 = ${digit1}`)
         console.log(`Digit2 = ${digit2}`)
         console.log(`Operators = ${operator}`)
         console.log(`operator length=${operator.length}`)
 
-        if (operator.length === 2 || button.innerHTML === "=") {
+        if (operator.length === 2 || (button.innerHTML === "=" && digit2 !== "")) {
+        if (operator.length >= 2 && digit2 === "") {
+            operator = operator[1]
+            return
+        }
         console.log("Operating")
         let oper = ""
         oper = operator[0]
@@ -97,18 +118,23 @@ for (let i=1; i <= 16; i++) {
             operator = operator.slice(1)
         } else {
             operator = ""
-        }
+        } 
         
         let a = digit1
         let b = digit2
         result = operate(oper, parseFloat(a), parseFloat(b))
+        result = Number(result.toFixed(5))
         console.log(result)
         digit1 = `${result}`
         digit2 = ""
         }
 
-        if (button.innerHTML === "=") {
+        if (button.innerHTML === "=" && digit2 !== "") {
             display.value = result
+        } else if (button.innerHTML === "=" && digit2 === "") {
+            console.log("Wrong usage of =")
+            operator = ""
+            display.value = digit1
         }
     })
     container.appendChild(button)
